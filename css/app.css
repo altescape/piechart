@@ -1,0 +1,28 @@
+html,body{font-family: Helvetica Neue,Helvetica,Calibri,Arial,sans-serif;} 
+
+html {
+  margin: 0.5em;
+  background: whitesmoke;
+}
+
+body {
+  padding: 5em;
+  background: white;
+  border: 1px solid #DBDBDB;
+  border-radius: 4px;
+}
+
+p {
+  margin: 1em 0
+}
+
+label {
+  width: 230px;
+  display: block;
+  float: left;
+  margin-top: 12px;
+}
+
+input {
+  padding: 1em;
+}

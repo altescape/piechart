@@ -1,0 +1,19 @@
+{
+  "name": "smsw_slideshow",
+  "version": "0.0.0",
+  "authors": [
+    "altescape <hello@michaelwatts.me>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3"
+  }
+}
