@@ -1,2 +1,5 @@
 .control-group
   button(onclick="update()") Update
+
+div(ng-controller="ChartCtrl")
+  nvd3-line-chart(data="exampleData" showXAxis="true" showYAxis="true" tooltips="true" interactive="true")
