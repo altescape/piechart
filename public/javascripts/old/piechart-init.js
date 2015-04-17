@@ -1,8 +1,8 @@
 window.onload = createPieChart;
 function createPieChart() {
   var pieChart = new PieChart( "piechart",  {
-    values: [300, 70, 45, 65, 20, 130],
-    labels: ["First", "Second", "Third", "Four", "Five", "Six"],
+    values: [3000000, 3000000, 3000000],
+    labels: ["$1,000,000", "$3,000,000", "$300,000"],
     colors: [
       ["#bbddb3", "#1d8e04"], // green
       ["#e2f5b4", "#9edd08"], // yellow green

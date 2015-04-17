@@ -8,7 +8,7 @@
 
 function PieChart(id, d) {
   
-  d = typeof a !== 'undefined' ? d : {
+  d = typeof d !== 'undefined' ? d : {
     values: [30, 70, 45, 65, 20, 130],
     labels: ["First", "Second", "Third", "Four", "Five", "Six"],
     colors: [
@@ -21,92 +21,79 @@ function PieChart(id, d) {
     ]
   };
 
-  this.values = d.values ? d.values : [30, 70, 45, 65, 20, 130]; // degrees
-  this.labels = d.labels ? d.labels : ["First", "Second", "Third", "Four", "Five", "Six"];
-  this.colors = d.colors ? d.colors : [
-    ["#bbddb3", "#1d8e04"], // green
-    ["#e2f5b4", "#9edd08"], // yellow green
-    ["#fdfbb4", "#faf406"], // yellow
-    ["#fbd4b7", "#f2700f"], // orange
-    ["#f8bdb4", "#ea2507"], // red
-    ["#e2bcbd", "#9e2126"]  // purple
-  ];
-
+  this.values = d.values;
+  this.labels = d.labels;
+  this.colors = d.colors;
   this.canvas = document.getElementById(id);
 }
 
 PieChart.prototype = {
 
   select: function (segment) {
-    var self = this;
     var context = this.canvas.getContext("2d");
     this.drawSegment(this.canvas, context, segment, this.values[segment], true);
   },
 
   draw: function () {
-    var self = this;
     var context = this.canvas.getContext("2d");
+    var startAngle = 1.57079633;
     for (var i = 0; i < this.values.length; i++) {
-      this.drawSegment(this.canvas, context, i, this.values[i], false);
+      var radians = this.degreesToRadians(this.degrees(this.values[i]));
+      this.drawSegment(this.canvas, context, i, radians, startAngle, false);
+      startAngle = startAngle + radians;
     }
   },
 
-  drawSegment: function (canvas, context, i, size, isSelected) {
-    var self = this;
+  drawSegment: function (canvas, context, i, size, startAngle, isSelected) {
     context.save();
+    
     var centerX = Math.floor(canvas.width / 2),
         centerY = Math.floor(canvas.height / 2),
         radius = Math.floor(canvas.width / 2),
-        startingAngle = this.degreesToRadians(this.sumTo(self.values, i)),
-        arcSize = this.degreesToRadians(size),
-        endingAngle = startingAngle + arcSize;
-
-    console.log(this.sumTo(self.values, i) + ":" + size + ":" + (this.sumTo(self.values, i)-size));
-
+        arcSize = size, 
+        endAngle = startAngle + arcSize;
+    
     context.beginPath();
     context.moveTo(centerX, centerY);
-    context.arc(centerX, centerY, radius, startingAngle, endingAngle, false);
+    context.arc(centerX, centerY, radius, startAngle, endAngle, false);
     context.closePath();
 
     isSelected ? 
-      context.fillStyle = self.colors[i][1] :
-      context.fillStyle = self.colors[i][0];
+      context.fillStyle = this.colors[i][1] :
+      context.fillStyle = this.colors[i][0];
 
     context.fill();
     context.restore();
 
-    self.drawSegmentLabel(canvas, context, i, isSelected);
+    this.drawSegmentLabel(canvas, context, i, startAngle, isSelected);
   },
 
-  drawSegmentLabel: function (canvas, context, i, isSelected) {
-    var self = this;
+  drawSegmentLabel: function (canvas, context, i, size, isSelected) {
     context.save();
     var x = Math.floor(canvas.width / 2);
     var y = Math.floor(canvas.height / 2);
-    var angle;
-    var angleD = self.sumTo(self.values, i);
-    var flip = (angleD < 90 || angleD > 270) ? false : true;
+    var angle = this.radiansToDegrees(size);
+    var angleD = size; 
+    var flip = (angle < 90 || angle > 270) ? false : true;
 
     context.translate(x,y);
-    
+    context.rotate(angleD);
+    context.fillStyle = "rgba(0,0,0,0.7)";
+
     if (flip) {
       angleD = angleD - 180;
       context.textAlign = "left";
-      angle = self.degreesToRadians(angleD);
-      context.rotate(angle);
       context.translate(-(x + (canvas.width * 0.5))+15, -(canvas.height * 0.05) - 10);
     } else {
       context.textAlign = "right";
-      angle = self.degreesToRadians(angleD);
-      context.rotate(angle);
     }
     
-    var fontSize = Math.floor(canvas.height / 25);
+    var fontSize = Math.floor(canvas.height / 30);
     context.font = fontSize + "pt Helvetica";
 
     var dx = Math.floor(canvas.width * 0.5) - 10;
     var dy = Math.floor(canvas.height * 0.05);
-    context.fillText(self.labels[i], dx, dy);
+    context.fillText(this.labels[i], dx, dy);
 
     context.restore();
   },
@@ -123,12 +110,24 @@ PieChart.prototype = {
     return (degrees * Math.PI)/180;
   },
 
-  sumTo: function (a, i) {
-    var sum = 0;
+  radiansToDegrees: function (value) {
+    return (value * 180) / Math.PI;
+  },
 
-    for (var j = 0; j < i; j++) {
-      sum += a[j];
+  percentage: function (value) {
+    return (value / this.total()) * 100;
+  },
+
+  degrees: function (value) {
+    return (value / this.total()) * 360; 
+  },  
+
+  total: function () {
+    var total = 0;
+    for (var i = 0; i < this.values.length; i++) {
+      total += this.values[i];
     }
-    return sum;
+    return total;
   }  
 };
+
